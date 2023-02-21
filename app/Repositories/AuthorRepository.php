@@ -5,7 +5,6 @@ namespace App\Repositories;
 use App\Http\Requests\Author\AuthorStoreRequest;
 use App\Http\Requests\Author\AuthorUpdateRequest;
 use App\Models\Author;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -48,7 +47,11 @@ class AuthorRepository {
                     $file = $request->file('avatar');
                     $this->authorFileUpload($file, $path, $author);
                 }
-                return response()->json(['success' => true, 'message' => 'Author has been successfully created.']);
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Author ' . $author->name . ' has been successfully created.',
+                    'author' => $author->load(['avatar', 'books'])
+                ]);
             } catch (\Exception $e) {
                 Log::info($e->getMessage());
         }
@@ -75,9 +78,13 @@ class AuthorRepository {
                         }
                     }
                 }
-                    return response()->json(['success' => true, 'message' => 'Author has been successfully updated.']);
-            } catch (\Exception $e) {
-                    Log::info($e->getMessage());
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Author ' . $author->name . ' has been successfully updated.',
+                    'author' => $author->load(['avatar', 'books'])
+                ]);
+            }catch(\Exception $e) {
+                Log::info($e->getMessage());
             }
     }
 
@@ -85,7 +92,10 @@ class AuthorRepository {
         try{
             $author->delete();
             $author->avatar()->delete();
-            return response()->json(['success' => true, 'message' => 'Author has been successfully deleted.']);
+            return response()->json([
+                'success' => true,
+                'message' => 'Author has been successfully deleted.'
+            ]);
         }catch(\Exception $e) {
             Log::info($e->getMessage());
         }

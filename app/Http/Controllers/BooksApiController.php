@@ -2,10 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Http\Requests\Book\BookStoreRequest;
+use App\Http\Requests\Book\BookUpdateRequest;
+use App\Models\Book;
+use App\Repositories\BookRepository;
 
 class BooksApiController extends Controller
 {
+
+    public function __construct(private BookRepository $bookRepository)
+    {
+        $this->bookRepository = $bookRepository;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -13,7 +22,7 @@ class BooksApiController extends Controller
      */
     public function index()
     {
-        //
+        return $this->bookRepository->all();
     }
 
     /**
@@ -22,9 +31,9 @@ class BooksApiController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(BookStoreRequest $request)
     {
-        //
+        return $this->bookRepository->store($request);
     }
 
     /**
@@ -33,9 +42,9 @@ class BooksApiController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Book $book)
     {
-        //
+        return $this->bookRepository->show($book);
     }
 
     /**
@@ -45,9 +54,9 @@ class BooksApiController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(BookUpdateRequest $request, Book $book)
     {
-        //
+        return $this->bookRepository->update($request, $book);
     }
 
     /**
@@ -56,8 +65,8 @@ class BooksApiController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Book $book)
     {
-        //
+        return $this->bookRepository->destroy($book);
     }
 }

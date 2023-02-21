@@ -18,7 +18,7 @@ class RegisterController extends Controller
                 if($userExists) {
                     return response()->json(['success' => false, 'message' => 'Account with this ' . $request->get('email') . ' address already exists!']);
                 }
-                    //register owner
+                    //register user
                     $user = User::create([
                         'name' => $request->get('name'),
                         'surname' => $request->get('surname'),
