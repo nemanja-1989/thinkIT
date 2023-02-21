@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuthorsApiController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -14,6 +15,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::get('/authors', [AuthorsApiController::class, 'index']);
+    Route::get('/authors/{author}/show', [AuthorsApiController::class, 'show']);
+    Route::post('/authors/store', [AuthorsApiController::class, 'store']);
+    Route::patch('/authors/{author}/update', [AuthorsApiController::class, 'update']);
+    Route::delete('/authors/{author}/delete', [AuthorsApiController::class, 'destroy']);
 });
