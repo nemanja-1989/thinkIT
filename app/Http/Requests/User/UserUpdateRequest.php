@@ -31,6 +31,8 @@ class UserUpdateRequest extends FormRequest
             'password' => 'required|string|min:6|max:255',
             'password_confirmation' => 'required_with:password|same:password|min:6|max:255',
             'role_type' => 'required|integer',
+            'permissions' => 'required|array',
+            'permissions.*' => 'required_with:permissions|string|min:2|max:191',
         ];
     }
 

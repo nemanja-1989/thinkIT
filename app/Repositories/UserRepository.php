@@ -48,54 +48,9 @@ class UserRepository {
                 'email' => $request->get('email'),
                 'password' => bcrypt($request->get('password'))
             ]);
+            //assign role and permissions
+            $this->assignRoleAndPermissions($user);
 
-            if($request->get('role_type') === RoleConstants::REGISTER_LIBRARIAN['status']) {
-                //assign role to Librarian
-                $librarianRoleExists = Role::where('name', RoleConstants::LIBRARIAN['name'])->exists();
-                if($librarianRoleExists) {
-                    $librarianRole = Role::where('name', RoleConstants::LIBRARIAN['name'])->first();
-                    $user->assignRole($librarianRole);
-                }
-                //assign predefined permissions to Librarian role
-                $permissionsExists = \Illuminate\Support\Facades\DB::table('permissions')->exists();
-                if($permissionsExists) {
-                    $librarianPermissions = \Illuminate\Support\Facades\DB::table('permissions')
-                        ->whereIn('name', [
-                            PermissionConstants::USER_PRIVILEGES['name'],
-                            PermissionConstants::AUTHOR_PRIVILEGES['name'],
-                            PermissionConstants::BOOK_PRIVILEGES_VIEW_ONLY['name'],
-                            PermissionConstants::BOOK_PRIVILEGES_CREATE['name'],
-                            PermissionConstants::BOOK_PRIVILEGES_EDIT['name'],
-                            PermissionConstants::BOOK_PRIVILEGES_DELETE['name']
-                        ])
-                        ->pluck('name')
-                        ->toArray();
-                    $user->givePermissionTo($librarianPermissions);
-                }
-            }
-
-            if($request->get('role_type') === RoleConstants::REGISTER_READER['status']) {
-                //assign role to Reader
-                $readerRoleExists = Role::where('name', RoleConstants::READER['name'])->exists();
-                if($readerRoleExists) {
-                    $readerRole = Role::where('name', RoleConstants::READER['name'])->first();
-                    $user->assignRole($readerRole);
-                }
-                //assign predefined permissions to Reader role
-                $permissionsExists = \Illuminate\Support\Facades\DB::table('permissions')->exists();
-                if($permissionsExists) {
-                    $readerPermissions = \Illuminate\Support\Facades\DB::table('permissions')
-                        ->whereIn('name', [
-                            PermissionConstants::BOOK_PRIVILEGES_VIEW_ONLY['name'],
-                            PermissionConstants::BOOK_PRIVILEGES_CREATE['name'],
-                            PermissionConstants::BOOK_PRIVILEGES_EDIT['name'],
-                            PermissionConstants::BOOK_PRIVILEGES_DELETE['name']
-                        ])
-                        ->pluck('name')
-                        ->toArray();
-                    $user->givePermissionTo($readerPermissions);
-                }
-            }
             $token = $user->createToken(env('API_TOKEN'))->plainTextToken;
             $user->notify(new CreateUserNotification($user, auth()->user(), $request->get('password')));
             return response()->json([
@@ -119,6 +74,10 @@ class UserRepository {
                 'password' => bcrypt($request->get('password'))
             ]);
             $user->update();
+            $user->roles()->delete();
+            $user->permissions()->delete();
+            //assign role and permissions
+            $this->assignRoleAndPermissions($user);
             $user->notify(new UpdateUserNotification($user, auth()->user(), $request->get('password')));
             return response()->json([
                 'success' => true,
@@ -140,6 +99,36 @@ class UserRepository {
             ]);
         }catch(\Exception $e) {
             Log::info($e->getMessage());
+        }
+    }
+
+    private function assignRoleAndPermissions($user) {
+        if(\request()->get('role_type') === RoleConstants::REGISTER_LIBRARIAN['status']) {
+            //assign role to Librarian
+            $librarianRoleExists = Role::where('name', RoleConstants::LIBRARIAN['name'])->exists();
+            if($librarianRoleExists) {
+                $librarianRole = Role::where('name', RoleConstants::LIBRARIAN['name'])->first();
+                $user->assignRole($librarianRole);
+            }
+        }
+
+        if(\request()->get('role_type') === RoleConstants::REGISTER_READER['status']) {
+            //assign role to Reader
+            $readerRoleExists = Role::where('name', RoleConstants::READER['name'])->exists();
+            if($readerRoleExists) {
+                $readerRole = Role::where('name', RoleConstants::READER['name'])->first();
+                $user->assignRole($readerRole);
+            }
+        }
+
+        //assign predefined permissions
+        $permissionsExists = \Illuminate\Support\Facades\DB::table('permissions')->exists();
+        if($permissionsExists) {
+            $readerPermissions = \Illuminate\Support\Facades\DB::table('permissions')
+                ->whereIn('name', \request()->get('permissions'))
+                ->pluck('name')
+                ->toArray();
+            $user->givePermissionTo($readerPermissions);
         }
     }
 }
