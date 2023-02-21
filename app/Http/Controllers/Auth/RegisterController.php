@@ -26,7 +26,7 @@ class RegisterController extends Controller
                         'password' => bcrypt($request->get('password')),
                     ]);
 
-                    if($request->get('role_type') === RoleConstants::REGISTER_LIBRARIAN['status']) {
+                    if((int)$request->get('role_type') === (int)RoleConstants::REGISTER_LIBRARIAN['status']) {
                         //assign role to Librarian
                         $librarianRoleExists = Role::where('name', RoleConstants::LIBRARIAN['name'])->exists();
                         if($librarianRoleExists) {
