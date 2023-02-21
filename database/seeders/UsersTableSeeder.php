@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Helpers\RoleConstant;
+use App\Helpers\RoleConstants;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -22,8 +22,8 @@ class UsersTableSeeder extends Seeder
         Schema::disableForeignKeyConstraints();
         DB::table("users")->truncate();
 
-        $librarianRole = Role::where("name", RoleConstant::LIBRARIAN['name'])->first();
-        $readerRole = Role::where("name", RoleConstant::READER['name'])->first();
+        $librarianRole = Role::where("name", RoleConstants::LIBRARIAN['name'])->first();
+        $readerRole = Role::where("name", RoleConstants::READER['name'])->first();
 
         $librarian = User::create([
             'name' => 'Librarian',

@@ -2,8 +2,9 @@
 
 namespace App\Helpers;
 
-class RoleConstant {
+class RoleConstants {
 
+    //ALL ROLES
     const LIBRARIAN = [
         'name' => 'librarian',
         'status' => 1

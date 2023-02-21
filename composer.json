@@ -28,7 +28,8 @@
             "Database\\Seeders\\": "database/seeders/"
         },
         "files": [
-            "app/Helpers/RoleConstants.php"
+            "app/Helpers/RoleConstants.php",
+            "app/Helpers/PermissionConstants.php"
         ]
     },
     "autoload-dev": {
