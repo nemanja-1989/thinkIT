@@ -19,6 +19,7 @@ return new class extends Migration
             $table->foreign('author_id')->references('id')->on('authors')->onDelete('cascade')->onUpdate('cascade');
             $table->string('image_name')->nullable();
             $table->string('org_filename')->nullable();
+            $table->softDeletes();
             $table->timestamps();
         });
     }

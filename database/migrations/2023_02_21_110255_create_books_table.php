@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('title');
             $table->longText('description')->nullable();
             $table->integer('book_number')->unique();
+            $table->softDeletes();
             $table->timestamps();
         });
     }
