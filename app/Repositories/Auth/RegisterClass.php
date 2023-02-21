@@ -6,6 +6,7 @@ use App\Helpers\PermissionConstants;
 use App\Helpers\RoleConstants;
 use App\Http\Requests\RegisterRequest;
 use App\Models\User;
+use Illuminate\Support\Facades\Log;
 use Spatie\Permission\Models\Role;
 
 class RegisterClass {
@@ -34,10 +35,7 @@ class RegisterClass {
                     'user' => $user->load(['roles', 'permissions'])
                 ], 201);
         }catch(\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'errors' => $e->getMessage()
-            ]);
+            Log::info($e->getMessage());
         }
     }
 

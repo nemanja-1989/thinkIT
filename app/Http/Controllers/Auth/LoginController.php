@@ -7,7 +7,6 @@ use App\Http\Requests\LogoutRequest;
 use App\Http\Controllers\Controller;
 use App\Repositories\Auth\LoginClass;
 use App\Repositories\Auth\LogoutClass;
-use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
