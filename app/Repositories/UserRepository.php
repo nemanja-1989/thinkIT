@@ -9,6 +9,7 @@ use App\Http\Requests\User\UserUpdateRequest;
 use App\Models\User;
 use App\Notifications\CreateUserNotification;
 use App\Notifications\UpdateUserNotification;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Spatie\Permission\Models\Role;
 
@@ -74,8 +75,6 @@ class UserRepository {
                 'password' => bcrypt($request->get('password'))
             ]);
             $user->update();
-            $user->roles()->delete();
-            $user->permissions()->delete();
             //assign role and permissions
             $this->assignRoleAndPermissions($user);
             $user->notify(new UpdateUserNotification($user, auth()->user(), $request->get('password')));
@@ -103,7 +102,7 @@ class UserRepository {
     }
 
     private function assignRoleAndPermissions($user) {
-        if(\request()->get('role_type') === RoleConstants::REGISTER_LIBRARIAN['status']) {
+        if((int)\request()->get('role_type') === (int)RoleConstants::REGISTER_LIBRARIAN['status']) {
             //assign role to Librarian
             $librarianRoleExists = Role::where('name', RoleConstants::LIBRARIAN['name'])->exists();
             if($librarianRoleExists) {
@@ -112,12 +111,12 @@ class UserRepository {
             }
         }
 
-        if(\request()->get('role_type') === RoleConstants::REGISTER_READER['status']) {
+        if((int)\request()->get('role_type') === (int)RoleConstants::REGISTER_READER['status']) {
             //assign role to Reader
             $readerRoleExists = Role::where('name', RoleConstants::READER['name'])->exists();
             if($readerRoleExists) {
                 $readerRole = Role::where('name', RoleConstants::READER['name'])->first();
-                $user->syncRoles([$librarianRole]);
+                $user->syncRoles([$readerRole]);
             }
         }
 

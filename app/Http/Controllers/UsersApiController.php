@@ -8,6 +8,7 @@ use App\Http\Requests\User\UserRegisterRequest;
 use App\Http\Requests\User\UserUpdateRequest;
 use App\Models\User;
 use App\Repositories\UserRepository;
+use Illuminate\Http\Request;
 
 class UsersApiController extends Controller
 {

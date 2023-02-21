@@ -27,51 +27,11 @@ class RegisterController extends Controller
                     ]);
 
                     if((int)$request->get('role_type') === (int)RoleConstants::REGISTER_LIBRARIAN['status']) {
-                        //assign role to Librarian
-                        $librarianRoleExists = Role::where('name', RoleConstants::LIBRARIAN['name'])->exists();
-                        if($librarianRoleExists) {
-                            $librarianRole = Role::where('name', RoleConstants::LIBRARIAN['name'])->first();
-                            $user->assignRole($librarianRole);
-                        }
-                        //assign predefined permissions to Librarian role
-                        $permissionsExists = \Illuminate\Support\Facades\DB::table('permissions')->exists();
-                        if($permissionsExists) {
-                            $librarianPermissions = \Illuminate\Support\Facades\DB::table('permissions')
-                                ->whereIn('name', [
-                                    PermissionConstants::USER_PRIVILEGES['name'],
-                                    PermissionConstants::AUTHOR_PRIVILEGES['name'],
-                                    PermissionConstants::BOOK_PRIVILEGES_VIEW_ONLY['name'],
-                                    PermissionConstants::BOOK_PRIVILEGES_CREATE['name'],
-                                    PermissionConstants::BOOK_PRIVILEGES_EDIT['name'],
-                                    PermissionConstants::BOOK_PRIVILEGES_DELETE['name']
-                                ])
-                                ->pluck('name')
-                                ->toArray();
-                            $user->givePermissionTo($librarianPermissions);
-                        }
+                        $this->assignRoleAndPermissionsToLibrarian($user);
                     }
 
-                    if($request->get('role_type') === RoleConstants::REGISTER_READER['status']) {
-                        //assign role to Reader
-                        $readerRoleExists = Role::where('name', RoleConstants::READER['name'])->exists();
-                        if($readerRoleExists) {
-                            $readerRole = Role::where('name', RoleConstants::READER['name'])->first();
-                            $user->assignRole($readerRole);
-                        }
-                        //assign predefined permissions to Reader role
-                        $permissionsExists = \Illuminate\Support\Facades\DB::table('permissions')->exists();
-                        if($permissionsExists) {
-                            $readerPermissions = \Illuminate\Support\Facades\DB::table('permissions')
-                                ->whereIn('name', [
-                                    PermissionConstants::BOOK_PRIVILEGES_VIEW_ONLY['name'],
-                                    PermissionConstants::BOOK_PRIVILEGES_CREATE['name'],
-                                    PermissionConstants::BOOK_PRIVILEGES_EDIT['name'],
-                                    PermissionConstants::BOOK_PRIVILEGES_DELETE['name']
-                                ])
-                                ->pluck('name')
-                                ->toArray();
-                            $user->givePermissionTo($readerPermissions);
-                        }
+                    if((int)$request->get('role_type') === (int)RoleConstants::REGISTER_READER['status']) {
+                        $this->assignRoleAndPermissionsToReader($user);
                     }
                     $token = $user->createToken(env('API_TOKEN'))->plainTextToken;
                     return response()->json([
@@ -87,6 +47,54 @@ class RegisterController extends Controller
                 'success' => false,
                 'errors' => $e->getMessage()
             ]);
+        }
+    }
+
+    private function assignRoleAndPermissionsToLibrarian($user) {
+        //assign role to Librarian
+        $librarianRoleExists = Role::where('name', RoleConstants::LIBRARIAN['name'])->exists();
+        if($librarianRoleExists) {
+            $librarianRole = Role::where('name', RoleConstants::LIBRARIAN['name'])->first();
+            $user->assignRole($librarianRole);
+        }
+        //assign predefined permissions to Librarian role
+        $permissionsExists = \Illuminate\Support\Facades\DB::table('permissions')->exists();
+        if($permissionsExists) {
+            $librarianPermissions = \Illuminate\Support\Facades\DB::table('permissions')
+                ->whereIn('name', [
+                    PermissionConstants::USER_PRIVILEGES['name'],
+                    PermissionConstants::AUTHOR_PRIVILEGES['name'],
+                    PermissionConstants::BOOK_PRIVILEGES_VIEW_ONLY['name'],
+                    PermissionConstants::BOOK_PRIVILEGES_CREATE['name'],
+                    PermissionConstants::BOOK_PRIVILEGES_EDIT['name'],
+                    PermissionConstants::BOOK_PRIVILEGES_DELETE['name']
+                ])
+                ->pluck('name')
+                ->toArray();
+            $user->givePermissionTo($librarianPermissions);
+        }
+    }
+
+    private function assignRoleAndPermissionsToReader($user) {
+        //assign role to Reader
+        $readerRoleExists = Role::where('name', RoleConstants::READER['name'])->exists();
+        if($readerRoleExists) {
+            $readerRole = Role::where('name', RoleConstants::READER['name'])->first();
+            $user->assignRole($readerRole);
+        }
+        //assign predefined permissions to Reader role
+        $permissionsExists = \Illuminate\Support\Facades\DB::table('permissions')->exists();
+        if($permissionsExists) {
+            $readerPermissions = \Illuminate\Support\Facades\DB::table('permissions')
+                ->whereIn('name', [
+                    PermissionConstants::BOOK_PRIVILEGES_VIEW_ONLY['name'],
+                    PermissionConstants::BOOK_PRIVILEGES_CREATE['name'],
+                    PermissionConstants::BOOK_PRIVILEGES_EDIT['name'],
+                    PermissionConstants::BOOK_PRIVILEGES_DELETE['name']
+                ])
+                ->pluck('name')
+                ->toArray();
+            $user->givePermissionTo($readerPermissions);
         }
     }
 }
