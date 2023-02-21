@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Http\Requests\Book\BooksFilterRequest;
 use App\Http\Requests\Book\BookStoreRequest;
 use App\Http\Requests\Book\BookUpdateRequest;
 use App\Models\Book;
@@ -16,6 +17,21 @@ class BookRepository {
             return response()->json([
                 'success' => true,
                 'books' => Book::with(['author'])->paginate(12)
+            ]);
+        }catch(\Exception $e) {
+            Log::info($e->getMessage());
+        }
+    }
+
+    public function filterBooks(BooksFilterRequest $request) {
+
+        try{
+            $books = Book::query();
+            $books->hasAllData($request->validate());
+            $books->paginate(12);
+            return response()->json([
+                'success' => true,
+                'books' => $books
             ]);
         }catch(\Exception $e) {
             Log::info($e->getMessage());

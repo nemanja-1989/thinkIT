@@ -37,4 +37,34 @@ class Book extends Model
     public function author() {
         return $this->belongsTo(Author::class, 'author_id', 'id');
     }
+
+    public function scopeHasAllData($query)
+    {
+        $this->scopeSearchTitle($query);
+        $this->scopeSearchBookNumber($query);
+        $this->scopeSearchBookAuthor($query);
+    }
+
+    public function scopeSearchTitle($query)
+    {
+        if (\request()->get('searchTitle')) {
+            $query->where('title', 'LIKE', '%' . \request()->get('title') . '%');
+        }
+    }
+
+    public function scopeSearchBookNumber($query)
+    {
+        if (\request()->get('searchBookNumber')) {
+            $query->where('book_number', 'LIKE', '%' . \request()->get('searchBookNumber') . '%');
+        }
+    }
+
+    public function scopeSearchBookAuthor($query)
+    {
+        if (\request()->get('searchBookAuthor')) {
+            return $query->whereHas('author', function ($query) {
+                return $query->where('author_id', \request()->get('searchBookAuthor'));
+            });
+        }
+    }
 }

@@ -65,10 +65,7 @@ class RegisterClass {
         //assign predefined permissions to Reader role
         $readerPermissions = \Illuminate\Support\Facades\DB::table('permissions')
             ->whereIn('name', [
-                PermissionConstants::BOOK_PRIVILEGES_VIEW_ONLY['name'],
-                PermissionConstants::BOOK_PRIVILEGES_CREATE['name'],
-                PermissionConstants::BOOK_PRIVILEGES_EDIT['name'],
-                PermissionConstants::BOOK_PRIVILEGES_DELETE['name']
+                PermissionConstants::BOOK_PRIVILEGES_VIEW_ONLY['name']
             ])
             ->pluck('name')
             ->toArray();
