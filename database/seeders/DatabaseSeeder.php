@@ -14,6 +14,22 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
+
+        $this->call([RolesTableSeeder::class]);
+        $this->call([UsersTableSeeder::class]);
+
+        shell_exec('sudo chmod -R 777 ./storage');
+        shell_exec('sudo chmod -R 777 ./bootstrap/cache/');
+
+        \Illuminate\Support\Facades\Artisan::call('config:cache');
+        \Illuminate\Support\Facades\Artisan::call('cache:clear');
+        \Illuminate\Support\Facades\Artisan::call('config:clear');
+        \Illuminate\Support\Facades\Artisan::call('route:clear');
+        \Illuminate\Support\Facades\Artisan::call('view:clear');
+        \Illuminate\Support\Facades\Artisan::call('optimize:clear');
+
+
+
         // \App\Models\User::factory(10)->create();
 
         // \App\Models\User::factory()->create([
