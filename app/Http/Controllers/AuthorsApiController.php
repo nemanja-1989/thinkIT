@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\PermissionConstants;
+use App\Helpers\RoleConstants;
 use App\Http\Requests\Author\AuthorStoreRequest;
 use App\Http\Requests\Author\AuthorUpdateRequest;
 use App\Models\Author;
@@ -13,6 +15,12 @@ class AuthorsApiController extends Controller
     public function __construct(private AuthorRepository $authorRepository)
     {
         $this->authorRepository = $authorRepository;
+        $this->middleware([
+            'role_or_permission:' .
+            RoleConstants::LIBRARIAN['name'] . '|' .
+            RoleConstants::READER['name'] . '|' .
+            PermissionConstants::AUTHOR_PRIVILEGES['name']
+        ]);
     }
 
     /**

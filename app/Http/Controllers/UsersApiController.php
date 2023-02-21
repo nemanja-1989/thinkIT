@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\PermissionConstants;
+use App\Helpers\RoleConstants;
 use App\Http\Requests\User\UserRegisterRequest;
 use App\Http\Requests\User\UserUpdateRequest;
 use App\Models\User;
 use App\Repositories\UserRepository;
-use Illuminate\Http\Request;
 
 class UsersApiController extends Controller
 {
@@ -14,6 +15,12 @@ class UsersApiController extends Controller
     public function __construct(private UserRepository $userRepository)
     {
         $this->userRepository = $userRepository;
+        $this->middleware([
+            'role_or_permission:' .
+            RoleConstants::LIBRARIAN['name'] . '|' .
+            RoleConstants::READER['name'] . '|' .
+            PermissionConstants::USER_PRIVILEGES['name']
+        ]);
     }
 
     /**

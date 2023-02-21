@@ -108,7 +108,7 @@ class UserRepository {
             $librarianRoleExists = Role::where('name', RoleConstants::LIBRARIAN['name'])->exists();
             if($librarianRoleExists) {
                 $librarianRole = Role::where('name', RoleConstants::LIBRARIAN['name'])->first();
-                $user->assignRole($librarianRole);
+                $user->syncRoles([$librarianRole]);
             }
         }
 
@@ -117,18 +117,18 @@ class UserRepository {
             $readerRoleExists = Role::where('name', RoleConstants::READER['name'])->exists();
             if($readerRoleExists) {
                 $readerRole = Role::where('name', RoleConstants::READER['name'])->first();
-                $user->assignRole($readerRole);
+                $user->syncRoles([$librarianRole]);
             }
         }
 
-        //assign predefined permissions
+        //assign permissions
         $permissionsExists = \Illuminate\Support\Facades\DB::table('permissions')->exists();
         if($permissionsExists) {
             $readerPermissions = \Illuminate\Support\Facades\DB::table('permissions')
                 ->whereIn('name', \request()->get('permissions'))
                 ->pluck('name')
                 ->toArray();
-            $user->givePermissionTo($readerPermissions);
+            $user->syncPermissions([$readerPermissions]);
         }
     }
 }

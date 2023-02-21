@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\PermissionConstants;
+use App\Helpers\RoleConstants;
 use App\Http\Requests\Book\BookStoreRequest;
 use App\Http\Requests\Book\BookUpdateRequest;
 use App\Models\Book;
@@ -13,6 +15,15 @@ class BooksApiController extends Controller
     public function __construct(private BookRepository $bookRepository)
     {
         $this->bookRepository = $bookRepository;
+        $this->middleware([
+            'role_or_permission:' .
+            RoleConstants::LIBRARIAN['name'] . '|' .
+            RoleConstants::READER['name'] . '|' .
+            PermissionConstants::BOOK_PRIVILEGES_VIEW_ONLY['name'] . '|' .
+            PermissionConstants::BOOK_PRIVILEGES_CREATE['name'] . '|' .
+            PermissionConstants::BOOK_PRIVILEGES_EDIT['name'] . '|' .
+            PermissionConstants::BOOK_PRIVILEGES_DELETE['name']
+        ]);
     }
 
     /**
