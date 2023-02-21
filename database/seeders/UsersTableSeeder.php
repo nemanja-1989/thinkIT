@@ -27,6 +27,7 @@ class UsersTableSeeder extends Seeder
 
         $librarian = User::create([
             'name' => 'Librarian',
+            'surname' => 'Librarian Librarian',
             'email' => 'librarian@thinkit.com',
             'password' => bcrypt('@123qwer')
         ]);
@@ -35,6 +36,7 @@ class UsersTableSeeder extends Seeder
 
         $reader = User::create([
             'name' => 'Reader',
+            'surname' => 'Reader Reader',
             'email' => 'reader@thinkit.com',
             'password' => bcrypt('@123qwer')
         ]);
