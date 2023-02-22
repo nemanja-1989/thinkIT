@@ -8,6 +8,11 @@ use Illuminate\Support\Facades\Log;
 
 class LoginClass {
 
+    /**
+     * @param LoginRequest $request
+     *
+     * @return [type]
+     */
     public function loginUser(LoginRequest $request) {
         try{
             $request->authenticate();

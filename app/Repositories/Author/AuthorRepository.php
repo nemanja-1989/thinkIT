@@ -6,22 +6,34 @@ use App\Contracts\Author\AuthorInterface;
 use App\Http\Requests\Author\AuthorStoreRequest;
 use App\Http\Requests\Author\AuthorUpdateRequest;
 use App\Models\Author;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class AuthorRepository implements AuthorInterface {
 
+    /**
+     * @return [type]
+     */
     public function paginate() {
 
         return Author::with(['avatar', 'books'])->paginate(12);
     }
 
+    /**
+     * @param Author $author
+     *
+     * @return [type]
+     */
     public function show(Author $author) {
 
         return $author->load(['avatar', 'books']);
     }
 
+    /**
+     * @param AuthorStoreRequest $request
+     *
+     * @return [type]
+     */
     public function store(AuthorStoreRequest $request) {
         $author = Author::create([
             'name' => $request->get('name'),
@@ -35,6 +47,12 @@ class AuthorRepository implements AuthorInterface {
         return $author->load(['avatar', 'books']);
     }
 
+    /**
+     * @param AuthorUpdateRequest $request
+     * @param Author $author
+     *
+     * @return [type]
+     */
     public function update(AuthorUpdateRequest $request, Author $author) {
         $author->fill([
             'name' => $request->get('name'),
@@ -57,6 +75,11 @@ class AuthorRepository implements AuthorInterface {
         }
     }
 
+    /**
+     * @param Author $author
+     *
+     * @return [type]
+     */
     public function destroy(Author $author) {
         $author->delete();
         $author->avatar()->delete();

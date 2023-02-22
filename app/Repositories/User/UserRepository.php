@@ -14,16 +14,29 @@ use App\Notifications\UpdateUserNotification;
 
 class UserRepository implements UserInterface {
 
+    /**
+     * @return [type]
+     */
     public function paginate() {
 
         return User::paginate(12);
     }
 
+    /**
+     * @param User $user
+     *
+     * @return [type]
+     */
     public function show(User $user) {
 
         return $user->load(['author']);
     }
 
+    /**
+     * @param UserRegisterRequest $request
+     *
+     * @return [type]
+     */
     public function store(UserRegisterRequest $request) {
         $user = User::create([
             'name' => $request->get('name'),
@@ -40,6 +53,12 @@ class UserRepository implements UserInterface {
         return $user;
     }
 
+    /**
+     * @param UserUpdateRequest $request
+     * @param User $user
+     *
+     * @return [type]
+     */
     public function update(UserUpdateRequest $request, User $user) {
         $user->fill([
             'name' => $request->get('name'),
@@ -56,6 +75,11 @@ class UserRepository implements UserInterface {
         $user->notify(new UpdateUserNotification($user, auth()->user(), $request->get('password')));
     }
 
+    /**
+     * @param User $user
+     *
+     * @return [type]
+     */
     public function destroy(User $user) {
         $user->delete();
     }

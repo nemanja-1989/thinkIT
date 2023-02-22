@@ -6,6 +6,11 @@ use App\Http\Requests\LogoutRequest;
 
 class LogoutClass {
 
+    /**
+     * @param LogoutRequest $request
+     *
+     * @return [type]
+     */
     public function logoutUser(LogoutRequest $request) {
         try{
             $request->user()->currentAccessToken()->delete();

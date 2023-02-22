@@ -11,23 +11,20 @@ use Illuminate\Support\Facades\Log;
 
 class RegisterClass {
 
+    /**
+     * @param RegisterRequest $request
+     *
+     * @return [type]
+     */
     public function registerUser(RegisterRequest $request) {
         try{
-                //register user
                 $user = User::create([
                     'name' => $request->get('name'),
                     'surname' => $request->get('surname'),
                     'email' => $request->get('email'),
                     'password' => bcrypt($request->get('password')),
                 ]);
-                if((int)$request->get('role_type') === (int)RoleConstants::REGISTER_LIBRARIAN['status']) {
-                    UserRoles::assignRolesLibrarianRegistration($user);
-                    UserPermission::assignPermissionsLibrarianRegistration($user);
-                }
-                if((int)$request->get('role_type') === (int)RoleConstants::REGISTER_READER['status']) {
-                    UserRoles::assignRolesReaderRegistration($user);
-                    UserPermission::assignPermissionsReaderRegistration($user);
-                }
+                $this->checkRoleRequest($user);
                 $token = $user->createToken(env('API_TOKEN'))->plainTextToken;
                 return response()->json([
                     'success' => true,
@@ -38,6 +35,19 @@ class RegisterClass {
                 ], 201);
         }catch(\Exception $e) {
             Log::info($e->getMessage());
+        }
+    }
+
+    private function checkRoleRequest($user) {
+        switch((int)\request()->get('role_type')) {
+            case (int)RoleConstants::REGISTER_LIBRARIAN['status']:
+                UserRoles::assignRolesLibrarianRegistration($user);
+                UserPermission::assignPermissionsLibrarianRegistration($user);
+                break;
+            case (int)RoleConstants::REGISTER_READER['status']:
+                UserRoles::assignRolesReaderRegistration($user);
+                UserPermission::assignPermissionsReaderRegistration($user);
+                break;
         }
     }
 }
