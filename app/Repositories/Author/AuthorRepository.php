@@ -60,7 +60,7 @@ class AuthorRepository implements AuthorInterface {
         $path = '/user/avatar/';
         $file = $request->file('avatar');
         $oldAvatar = $author->avatar->org_filename;
-        $deleteAvatar = Storage::disk('local')->delete($path . $oldAvatar);
+        Storage::disk('local')->delete($path . $oldAvatar);
         $author->avatar()->delete();
         $this->authorFileUpload($file, $path, $author);
     }
