@@ -9,7 +9,7 @@ use App\Notifications\Book\LibrarianStoreRecordBook;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 
-class LibrarianRecordNotificationBook
+class LibrarianRecordNotificationBook implements ShouldQueue
 {
     /**
      * Create the event listener.

@@ -4,7 +4,6 @@ namespace App\Repositories\Book;
 
 use App\Contracts\Book\BookInterface;
 use App\Events\Book\LibrarianRecordEventBook;
-use App\Http\Requests\Book\BooksFilterRequest;
 use App\Http\Requests\Book\BookStoreRequest;
 use App\Http\Requests\Book\BookUpdateRequest;
 use App\Models\Book;
