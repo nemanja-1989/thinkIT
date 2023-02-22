@@ -39,11 +39,9 @@ class AuthorRepository implements AuthorInterface {
             'name' => $request->get('name'),
             'surname' => $request->get('surname'),
         ]);
-        if ($request->file('avatar') && $request->file('avatar')->isValid()) {
-                $path = '/author/avatar/';
-                $file = $request->file('avatar');
-                $this->authorFileUpload($file, $path, $author);
-        }
+        $path = '/author/avatar/';
+        $file = $request->file('avatar');
+        $this->authorFileUpload($file, $path, $author);
         return $author->load(['avatar', 'books']);
     }
 
@@ -59,20 +57,12 @@ class AuthorRepository implements AuthorInterface {
             'surname' => $request->get('surname'),
         ]);
         $author->update();
-        if ($request->file('avatar') && $request->file('avatar')->isValid()) {
-                $path = '/user/avatar/';
-                if ($author->avatar()->exists()) {
-                    $file = $request->file('avatar');
-                    $oldAvatar = $author->avatar->org_filename;
-                    $deleteAvatar = Storage::disk('local')->delete($path . $oldAvatar);
-                    $author->avatar()->delete();
-                    if ($deleteAvatar === true) {
-                        $this->authorFileUpload($file, $path, $author);
-                    }else {
-                        $this->authorFileUpload($file, $path, $author);
-                    }
-                }
-        }
+        $path = '/user/avatar/';
+        $file = $request->file('avatar');
+        $oldAvatar = $author->avatar->org_filename;
+        $deleteAvatar = Storage::disk('local')->delete($path . $oldAvatar);
+        $author->avatar()->delete();
+        $this->authorFileUpload($file, $path, $author);
     }
 
     /**
