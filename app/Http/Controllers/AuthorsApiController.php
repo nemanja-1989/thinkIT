@@ -62,7 +62,7 @@ class AuthorsApiController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  Author $author
      * @return \Illuminate\Http\Response
      */
     public function show(Author $author)
@@ -81,7 +81,7 @@ class AuthorsApiController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  Author $author
      * @return \Illuminate\Http\Response
      */
     public function update(AuthorUpdateRequest $request, Author $author)
@@ -101,7 +101,7 @@ class AuthorsApiController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  Author $author
      * @return \Illuminate\Http\Response
      */
     public function destroy(Author $author)

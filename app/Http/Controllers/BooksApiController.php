@@ -77,7 +77,7 @@ class BooksApiController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  Book $book
      * @return \Illuminate\Http\Response
      */
     public function show(Book $book)
@@ -96,7 +96,7 @@ class BooksApiController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  Book $book
      * @return \Illuminate\Http\Response
      */
     public function update(BookUpdateRequest $request, Book $book)
@@ -116,7 +116,7 @@ class BooksApiController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  Book $book
      * @return \Illuminate\Http\Response
      */
     public function destroy(Book $book)
