@@ -17,25 +17,14 @@ class RegisterClass {
      * @return [type]
      */
     public function registerUser(RegisterRequest $request) {
-        try{
-                $user = User::create([
-                    'name' => $request->get('name'),
-                    'surname' => $request->get('surname'),
-                    'email' => $request->get('email'),
-                    'password' => bcrypt($request->get('password')),
-                ]);
-                $this->checkRoleRequest($user);
-                $token = $user->createToken(env('API_TOKEN'))->plainTextToken;
-                return response()->json([
-                    'success' => true,
-                    'token_type' => 'Bearer',
-                    'token' => $token,
-                    'message' => 'User has been successfully register',
-                    'user' => $user->load(['roles', 'permissions'])
-                ], 201);
-        }catch(\Exception $e) {
-            Log::info($e->getMessage());
-        }
+        $user = User::create([
+            'name' => $request->get('name'),
+            'surname' => $request->get('surname'),
+            'email' => $request->get('email'),
+            'password' => bcrypt($request->get('password')),
+        ]);
+        $this->checkRoleRequest($user);
+        return $user;
     }
 
     private function checkRoleRequest($user) {
