@@ -47,23 +47,23 @@ class Book extends Model
 
     public function scopeSearchTitle($query)
     {
-        if (\request()->get('searchTitle')) {
-            $query->where('title', 'LIKE', '%' . \request()->get('title') . '%');
+        if (\request()->get('search_title')) {
+            $query->where('title', 'LIKE', '%' . \request()->get('search_title') . '%');
         }
     }
 
     public function scopeSearchBookNumber($query)
     {
-        if (\request()->get('searchBookNumber')) {
-            $query->where('book_number', 'LIKE', '%' . \request()->get('searchBookNumber') . '%');
+        if (\request()->get('search_book_number')) {
+            $query->where('book_number', 'LIKE', '%' . \request()->get('search_book_number') . '%');
         }
     }
 
     public function scopeSearchBookAuthor($query)
     {
-        if (\request()->get('searchBookAuthor')) {
+        if (\request()->get('search_book_author')) {
             return $query->whereHas('author', function ($query) {
-                return $query->where('author_id', \request()->get('searchBookAuthor'));
+                return $query->where('author_id', \request()->get('search_book_author'));
             });
         }
     }

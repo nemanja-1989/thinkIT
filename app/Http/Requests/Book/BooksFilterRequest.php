@@ -26,9 +26,9 @@ class BooksFilterRequest extends FormRequest
     public function rules()
     {
         return [
-            'searchTitle' => 'sometimes|required|string|min:2|max:191',
-            'searchBookNumber' => 'sometimes|required|integer',
-            'searchBookAuthor' => 'sometimes|required|integer',
+            'search_title' => 'sometimes|required|string|min:2|max:191',
+            'search_book_number' => 'sometimes|required|integer',
+            'search_book_author' => 'sometimes|required|integer',
         ];
     }
 

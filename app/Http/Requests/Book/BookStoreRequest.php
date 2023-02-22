@@ -29,7 +29,7 @@ class BookStoreRequest extends FormRequest
             'author_id' => 'required|integer',
             'title' => 'required|string|min:2|max:191',
             'description' => 'sometimes|string|min:2|max:255',
-            'book_number' => 'required|integer|unique',
+            'book_number' => 'required|integer|unique:books,book_number',
         ];
     }
 

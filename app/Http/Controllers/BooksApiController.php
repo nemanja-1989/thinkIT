@@ -2,20 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use App\Helpers\PermissionConstants;
-use App\Helpers\RoleConstants;
+use App\Contracts\Book\BookFilterInterface;
+use App\Contracts\Book\BookInterface;
 use App\Http\Requests\Book\BooksFilterRequest;
 use App\Http\Requests\Book\BookStoreRequest;
 use App\Http\Requests\Book\BookUpdateRequest;
 use App\Models\Book;
-use App\Repositories\BookRepository;
+use Illuminate\Support\Facades\Log;
 
 class BooksApiController extends Controller
 {
 
-    public function __construct(private BookRepository $bookRepository)
+    public function __construct(
+        private BookInterface $bookRepositoryInterface,
+    )
     {
-        $this->bookRepository = $bookRepository;
+        $this->bookRepositoryInterface = $bookRepositoryInterface;
     }
 
     /**
@@ -25,7 +27,14 @@ class BooksApiController extends Controller
      */
     public function index()
     {
-        return $this->bookRepository->all();
+        try{
+            return response()->json([
+                'success' => true,
+                'books' => $this->bookRepositoryInterface->paginate()
+            ]);
+        }catch(\Exception $e) {
+            Log::info($e->getMessage());
+        }
     }
 
      /**
@@ -34,8 +43,15 @@ class BooksApiController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function filterBooks(BooksFilterRequest $request) {
-        return $this->bookRepository->filterBooks($request);
+    public function filterBooks(BooksFilterRequest $request, BookFilterInterface $bookRepository) {
+        try{
+            return response()->json([
+                'success' => true,
+                'books' => $bookRepository->filterBooks($request)
+            ]);
+        }catch(\Exception $e) {
+            Log::info($e->getMessage());
+        }
     }
 
     /**
@@ -46,7 +62,16 @@ class BooksApiController extends Controller
      */
     public function store(BookStoreRequest $request)
     {
-        return $this->bookRepository->store($request);
+        try {
+            $book = $this->bookRepositoryInterface->store($request);
+            return response()->json([
+                'success' => true,
+                'message' => 'Book' . $book->title . ' has been successfully created.',
+                'book' => $book->load(['author'])
+            ]);
+            } catch (\Exception $e) {
+                Log::info($e->getMessage());
+            }
     }
 
     /**
@@ -57,7 +82,14 @@ class BooksApiController extends Controller
      */
     public function show(Book $book)
     {
-        return $this->bookRepository->show($book);
+        try{
+            return response()->json([
+                'success' => true,
+                'book' => $this->bookRepositoryInterface->show($book)
+            ]);
+        }catch(\Exception $e) {
+            Log::info($e->getMessage());
+        }
     }
 
     /**
@@ -69,7 +101,16 @@ class BooksApiController extends Controller
      */
     public function update(BookUpdateRequest $request, Book $book)
     {
-        return $this->bookRepository->update($request, $book);
+        try {
+            $this->bookRepositoryInterface->update($request, $book);
+            return response()->json([
+                'success' => true,
+                'message' => 'Book ' . $book->title . ' has been successfully updated.',
+                'book' => $book->load(['author'])
+            ]);
+            } catch (\Exception $e) {
+                Log::info($e->getMessage());
+            }
     }
 
     /**
@@ -80,6 +121,15 @@ class BooksApiController extends Controller
      */
     public function destroy(Book $book)
     {
-        return $this->bookRepository->destroy($book);
+        try{
+            $this->bookRepositoryInterface->destroy($book);
+            return response()->json([
+                'success' => true,
+                'message' =>
+                'Book has been successfully deleted.'
+            ]);
+        }catch(\Exception $e) {
+            Log::info($e->getMessage());
+        }
     }
 }
