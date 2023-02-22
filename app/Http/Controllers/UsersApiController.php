@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Contracts\User\UserInterface;
 use App\Helpers\PermissionConstants;
 use App\Helpers\RoleConstants;
 use App\Http\Requests\User\UserRegisterRequest;
@@ -9,17 +10,17 @@ use App\Http\Requests\User\UserUpdateRequest;
 use App\Models\User;
 use App\Repositories\UserRepository;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class UsersApiController extends Controller
 {
 
-    public function __construct(private UserRepository $userRepository)
+    public function __construct(private UserInterface $userRepository)
     {
         $this->userRepository = $userRepository;
         $this->middleware([
             'role_or_permission:' .
             RoleConstants::LIBRARIAN['name'] . '|' .
-            RoleConstants::READER['name'] . '|' .
             PermissionConstants::USER_PRIVILEGES['name']
         ]);
     }
@@ -31,7 +32,14 @@ class UsersApiController extends Controller
      */
     public function index()
     {
-        return $this->userRepository->all();
+        try{
+            return response()->json([
+                'success' => true,
+                'users' => $this->userRepository->paginate()
+            ]);
+        }catch(\Exception $e) {
+            Log::info($e->getMessage());
+        }
     }
 
     /**
@@ -42,7 +50,18 @@ class UsersApiController extends Controller
      */
     public function store(UserRegisterRequest $request)
     {
-        return $this->userRepository->store($request);
+        try {
+            $user = $this->userRepository->store($request);
+            return response()->json([
+                'success' => true,
+                'token_type' => 'Bearer',
+                'token' => $user->createToken(env('API_TOKEN'))->plainTextToken,
+                'message' => 'User has been successfully created',
+                'user' => $user->load(['roles', 'permissions'])
+            ], 201);
+        } catch (\Exception $e) {
+            Log::info($e->getMessage());
+        }
     }
 
     /**
@@ -53,7 +72,14 @@ class UsersApiController extends Controller
      */
     public function show(User $user)
     {
-        return $this->userRepository->show($user);
+        try{
+            return response()->json([
+                'success' => true,
+                'author' => $this->userRepository->show($user)
+            ]);
+        }catch(\Exception $e) {
+            Log::info($e->getMessage());
+        }
     }
 
     /**
@@ -65,7 +91,16 @@ class UsersApiController extends Controller
      */
     public function update(UserUpdateRequest $request, User $user)
     {
-        return $this->userRepository->update($request, $user);
+        try {
+            $this->userRepository->update($request, $user);
+            return response()->json([
+                'success' => true,
+                'message' => 'User has been successfully updated.',
+                'user' => $user->load(['roles', 'permissions'])
+            ], 204);
+        } catch (\Exception $e) {
+            Log::info($e->getMessage());
+        }
     }
 
     /**
@@ -76,6 +111,15 @@ class UsersApiController extends Controller
      */
     public function destroy(User $user)
     {
-        return $this->userRepository->destroy($user);
+        try{
+            $this->userRepository->destroy($user);
+            return response()->json([
+                'success' => true,
+                'message' =>
+                'User has been successfully deleted.'
+            ]);
+        }catch(\Exception $e) {
+            Log::info($e->getMessage());
+        }
     }
 }

@@ -1,16 +1,16 @@
 <?php
 
-namespace App\Contracts;
+namespace App\Contracts\Author;
 
-use App\Http\Requests\Book\BookStoreRequest;
-use App\Http\Requests\Book\BookUpdateRequest;
-use App\Models\Book;
+use App\Http\Requests\Author\AuthorStoreRequest;
+use App\Http\Requests\Author\AuthorUpdateRequest;
+use App\Models\Author;
 
-interface BookInterface {
+interface AuthorInterface {
 
     public function paginate();
-    public function show(Book $book);
-    public function store(BookStoreRequest $request);
-    public function update(BookUpdateRequest $request, Book $book);
-    public function destroy(Book $book);
+    public function show(Author $author);
+    public function store(AuthorStoreRequest $request);
+    public function update(AuthorUpdateRequest $request, Author $author);
+    public function destroy(Author $author);
 }

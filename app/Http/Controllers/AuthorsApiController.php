@@ -2,23 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use App\Contracts\Author\AuthorInterface;
 use App\Helpers\PermissionConstants;
 use App\Helpers\RoleConstants;
 use App\Http\Requests\Author\AuthorStoreRequest;
 use App\Http\Requests\Author\AuthorUpdateRequest;
 use App\Models\Author;
-use App\Repositories\AuthorRepository;
+use Illuminate\Support\Facades\Log;
 
 class AuthorsApiController extends Controller
 {
 
-    public function __construct(private AuthorRepository $authorRepository)
+    public function __construct(private AuthorInterface $authorRepository)
     {
         $this->authorRepository = $authorRepository;
         $this->middleware([
             'role_or_permission:' .
             RoleConstants::LIBRARIAN['name'] . '|' .
-            RoleConstants::READER['name'] . '|' .
             PermissionConstants::AUTHOR_PRIVILEGES['name']
         ]);
     }
@@ -30,7 +30,14 @@ class AuthorsApiController extends Controller
      */
     public function index()
     {
-        return $this->authorRepository->all();
+        try{
+            return response()->json([
+                'success' => true,
+                'authors' => $this->authorRepository->paginate()
+            ]);
+        }catch(\Exception $e) {
+            Log::info($e->getMessage());
+        }
     }
 
     /**
@@ -41,7 +48,15 @@ class AuthorsApiController extends Controller
      */
     public function store(AuthorStoreRequest $request)
     {
-        return $this->authorRepository->store($request);
+        try {
+            return response()->json([
+                'success' => true,
+                'message' => 'Author ' . $this->authorRepository->store($request)->name . ' has been successfully created.',
+                'author' => $this->authorRepository->store($request)
+            ]);
+        } catch (\Exception $e) {
+            Log::info($e->getMessage());
+        }
     }
 
     /**
@@ -52,7 +67,14 @@ class AuthorsApiController extends Controller
      */
     public function show(Author $author)
     {
-        return $this->authorRepository->show($author);
+        try{
+            return response()->json([
+                'success' => true,
+                'author' => $this->authorRepository->show($author)
+            ]);
+        }catch(\Exception $e) {
+            Log::info($e->getMessage());
+        }
     }
 
     /**
@@ -64,7 +86,16 @@ class AuthorsApiController extends Controller
      */
     public function update(AuthorUpdateRequest $request, Author $author)
     {
-        return $this->authorRepository->update($request, $author);
+        try {
+            $this->authorRepository->update($request, $author);
+            return response()->json([
+                'success' => true,
+                'message' => 'Author ' . $author->name . ' has been successfully updated.',
+                'author' => $author->load(['avatar', 'books'])
+            ]);
+        }catch(\Exception $e) {
+            Log::info($e->getMessage());
+        }
     }
 
     /**
@@ -75,6 +106,14 @@ class AuthorsApiController extends Controller
      */
     public function destroy(Author $author)
     {
-        return $this->authorRepository->destroy($author);
+        try{
+            $this->authorRepository->destroy($author);
+            return response()->json([
+                'success' => true,
+                'message' => 'Author has been successfully deleted.'
+            ]);
+        }catch(\Exception $e) {
+            Log::info($e->getMessage());
+        }
     }
 }

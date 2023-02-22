@@ -196,6 +196,8 @@ return [
         App\Providers\RouteServiceProvider::class,
         Spatie\Permission\PermissionServiceProvider::class,
         App\Providers\BookInterfaceProvider::class,
+        App\Providers\AuthorInterfaceProvider::class,
+        App\Providers\UserInterfaceProvider::class,
 
     ],
 
