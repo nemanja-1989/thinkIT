@@ -7,6 +7,7 @@ use App\Events\Book\LibrarianRecordEventBook;
 use App\Events\User\LibrarianRecordEventUser;
 use App\Listeners\Author\LibrarianRecordNotificationAuthor;
 use App\Listeners\Book\LibrarianRecordNotificationBook;
+use App\Listeners\User\LibrarianRecordNotificationUser;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
