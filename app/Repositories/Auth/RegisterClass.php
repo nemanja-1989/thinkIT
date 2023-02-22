@@ -2,12 +2,12 @@
 
 namespace App\Repositories\Auth;
 
-use App\Helpers\PermissionConstants;
+use App\Classes\User\UserPermission;
+use App\Classes\User\UserRoles;
 use App\Helpers\RoleConstants;
 use App\Http\Requests\RegisterRequest;
 use App\Models\User;
 use Illuminate\Support\Facades\Log;
-use Spatie\Permission\Models\Role;
 
 class RegisterClass {
 
@@ -21,10 +21,12 @@ class RegisterClass {
                     'password' => bcrypt($request->get('password')),
                 ]);
                 if((int)$request->get('role_type') === (int)RoleConstants::REGISTER_LIBRARIAN['status']) {
-                    $this->assignRoleAndPermissionsToLibrarian($user);
+                    UserRoles::assignRolesLibrarianRegistration($user);
+                    UserPermission::assignPermissionsLibrarianRegistration($user);
                 }
                 if((int)$request->get('role_type') === (int)RoleConstants::REGISTER_READER['status']) {
-                    $this->assignRoleAndPermissionsToReader($user);
+                    UserRoles::assignRolesReaderRegistration($user);
+                    UserPermission::assignPermissionsReaderRegistration($user);
                 }
                 $token = $user->createToken(env('API_TOKEN'))->plainTextToken;
                 return response()->json([
@@ -37,38 +39,5 @@ class RegisterClass {
         }catch(\Exception $e) {
             Log::info($e->getMessage());
         }
-    }
-
-    private function assignRoleAndPermissionsToLibrarian($user) {
-        //assign role to Librarian
-        $librarianRole = Role::where('name', RoleConstants::LIBRARIAN['name'])->first();
-        $user->assignRole($librarianRole);
-        //assign predefined permissions to Librarian role
-        $librarianPermissions = \Illuminate\Support\Facades\DB::table('permissions')
-            ->whereIn('name', [
-                PermissionConstants::USER_PRIVILEGES['name'],
-                PermissionConstants::AUTHOR_PRIVILEGES['name'],
-                PermissionConstants::BOOK_PRIVILEGES_VIEW_ONLY['name'],
-                PermissionConstants::BOOK_PRIVILEGES_CREATE['name'],
-                PermissionConstants::BOOK_PRIVILEGES_EDIT['name'],
-                PermissionConstants::BOOK_PRIVILEGES_DELETE['name']
-            ])
-            ->pluck('name')
-            ->toArray();
-        $user->givePermissionTo($librarianPermissions);
-    }
-
-    private function assignRoleAndPermissionsToReader($user) {
-        //assign role to Reader
-        $readerRole = Role::where('name', RoleConstants::READER['name'])->first();
-        $user->assignRole($readerRole);
-        //assign predefined permissions to Reader role
-        $readerPermissions = \Illuminate\Support\Facades\DB::table('permissions')
-            ->whereIn('name', [
-                PermissionConstants::BOOK_PRIVILEGES_VIEW_ONLY['name']
-            ])
-            ->pluck('name')
-            ->toArray();
-        $user->givePermissionTo($readerPermissions);
     }
 }
