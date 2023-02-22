@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 
 /**
- *  LOGIN | LOGOUT
+ *  REGISTER | LOGIN | LOGOUT
  */
 Route::post('/register', [\App\Http\Controllers\Auth\RegisterController::class, 'register']);
 Route::post('/login', [\App\Http\Controllers\Auth\LoginController::class, 'login']);
