@@ -1,31 +1,29 @@
 <?php
 
-namespace App\Notifications;
+namespace App\Notifications\Author;
 
+use App\Models\Author;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class CreateUserNotification extends Notification
+class LibrarianStoreRecordAuthor extends Notification
 {
     use Queueable;
 
-    private $user;
-    private $creator;
-    private $password;
-
+    private $librarian;
+    private $author;
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct(User $user, User $creator, $password)
+    public function __construct(User $librarian, Author $author)
     {
-        $this->user = $user;
-        $this->creator = $creator;
-        $this->password = $password;
+        $this->librarian = $librarian;
+        $this->author = $author;
     }
 
     /**
@@ -48,10 +46,7 @@ class CreateUserNotification extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-                    ->line($this->user->name . ' ' . $this->user->surname . ' your account has been created by ' . $this->creator->email)
-                    ->line('Your email address is: ' . $this->user->email)
-                    ->line('Your password is: ' . $this->password)
-                    ->line('Please change your password immediately after login into your account!')
+                    ->line('The librarian ' . $this->librarian->email . ' store new record author ' . $this->author->name)
                     ->action('Notification Action', url('/'))
                     ->line('Thank you for using our application!');
     }

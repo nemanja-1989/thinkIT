@@ -5,12 +5,13 @@ namespace App\Repositories\User;
 use App\Classes\User\UserPermission;
 use App\Classes\User\UserRoles;
 use App\Contracts\User\UserInterface;
+use App\Events\User\LibrarianRecordEventUser;
 use App\Helpers\RoleConstants;
 use App\Http\Requests\User\UserRegisterRequest;
 use App\Http\Requests\User\UserUpdateRequest;
 use App\Models\User;
-use App\Notifications\CreateUserNotification;
-use App\Notifications\UpdateUserNotification;
+use App\Notifications\User\CreateUserNotification;
+use App\Notifications\User\UpdateUserNotification;
 
 class UserRepository implements UserInterface {
 
@@ -50,6 +51,7 @@ class UserRepository implements UserInterface {
         };
         UserPermission::assignPermissionsPerUpdate($user);
         $user->notify(new CreateUserNotification($user, auth()->user(), $request->get('password')));
+        event(new LibrarianRecordEventUser(auth()->user(), $user));
         return $user;
     }
 

@@ -3,6 +3,7 @@
 namespace App\Repositories\Book;
 
 use App\Contracts\Book\BookInterface;
+use App\Events\Book\LibrarianRecordEventBook;
 use App\Http\Requests\Book\BooksFilterRequest;
 use App\Http\Requests\Book\BookStoreRequest;
 use App\Http\Requests\Book\BookUpdateRequest;
@@ -35,13 +36,14 @@ class BookRepository implements BookInterface  {
      * @return [type]
      */
     public function store(BookStoreRequest $request) {
-
-        return Book::create([
+        $book = Book::create([
             'author_id' => $request->get('author_id'),
             'title' => $request->get('title'),
             'description' => $request->get('description'),
             'book_number' => $request->get('book_number'),
         ]);
+        event(new LibrarianRecordEventBook(auth()->user(), $book));
+        return $book;
     }
 
     /**

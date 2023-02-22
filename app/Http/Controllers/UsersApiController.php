@@ -8,8 +8,6 @@ use App\Helpers\RoleConstants;
 use App\Http\Requests\User\UserRegisterRequest;
 use App\Http\Requests\User\UserUpdateRequest;
 use App\Models\User;
-use App\Repositories\UserRepository;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 class UsersApiController extends Controller

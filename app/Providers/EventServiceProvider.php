@@ -2,6 +2,11 @@
 
 namespace App\Providers;
 
+use App\Events\Author\LibrarianRecordEventAuthor;
+use App\Events\Book\LibrarianRecordEventBook;
+use App\Events\User\LibrarianRecordEventUser;
+use App\Listeners\Author\LibrarianRecordNotificationAuthor;
+use App\Listeners\Book\LibrarianRecordNotificationBook;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -27,7 +32,20 @@ class EventServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        Event::listen(
+            LibrarianRecordEventAuthor::class,
+            [LibrarianRecordNotificationAuthor::class, 'handle']
+        );
+
+        Event::listen(
+            LibrarianRecordEventBook::class,
+            [LibrarianRecordNotificationBook::class, 'handle']
+        );
+
+        Event::listen(
+            LibrarianRecordEventUser::class,
+            [LibrarianRecordNotificationUser::class, 'handle']
+        );
     }
 
     /**

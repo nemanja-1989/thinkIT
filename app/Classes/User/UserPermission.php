@@ -8,8 +8,7 @@ use App\Models\User;
 class UserPermission {
 
     public static function assignPermissionsPerUpdate(User $user) {
-
-         //assign permissions
+         //assign permissions on update Librarian user
          $permissionsExists = \Illuminate\Support\Facades\DB::table('permissions')->exists();
          if($permissionsExists) {
              $readerPermissions = \Illuminate\Support\Facades\DB::table('permissions')

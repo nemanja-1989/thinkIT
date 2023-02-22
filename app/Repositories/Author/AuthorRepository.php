@@ -3,6 +3,7 @@
 namespace App\Repositories\Author;
 
 use App\Contracts\Author\AuthorInterface;
+use App\Events\Author\LibrarianRecordEventAuthor;
 use App\Http\Requests\Author\AuthorStoreRequest;
 use App\Http\Requests\Author\AuthorUpdateRequest;
 use App\Models\Author;
@@ -42,6 +43,7 @@ class AuthorRepository implements AuthorInterface {
         $path = '/author/avatar/';
         $file = $request->file('avatar');
         $this->authorFileUpload($file, $path, $author);
+        event(new LibrarianRecordEventAuthor(auth()->user(), $author));
         return $author->load(['avatar', 'books']);
     }
 
